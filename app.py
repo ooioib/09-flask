@@ -1,33 +1,31 @@
 # pip install flask
 # pip install numpy
-from datetime import datetime
-from flask import Flask, request
-import numpy as np
+# pip install pandas
+# pip install flask-cors
 
-in_memory_db = []
+# flask 실행시키려면, 터미널에 flask run
+from flask import Flask, request
+from flask_cors import CORS
+from flask_cors import cross_origin
+import util
 
 app = Flask(__name__)
-@app.get("/api/health" )
-def health_handle() :
+CORS(app, origins="*")   # api 전체
 
+@app.get("/api/health" )
+@cross_origin() # 라우트마다
+def health_handle() :
     return {"status" : True}
 
-@app.post("/api/fruit")
-def fruit_post_handle() :
-    # print(request.json, type(request.json))
-    one = {"name": request.json["name"], "create_at": datetime.now()}
-    in_memory_db.append(one)
-    return one, 201
+@app.get("/api/hospital/groups")
+def hospital_groups_handle() :
+    response = util.count_hospital_type()
+   # print(response)
+    return response, 200
 
-@app.get("/api/fruit")
-def fruit_get_handle() :
-    return in_memory_db
 
-@app.post("/api/numpy")
-def numpy_handle() :
-    a = np.array(request.json["data"])
-    # return {"mean": np.mean(a), "max": np.max(a), "min": np.min(a) }
-    return {"mean" : float(np.mean(a)), "max" : float(np.max(a)) , "min" : float(np.min(a)) }
+
+
 
 
 
